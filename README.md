@@ -1,0 +1,2 @@
+# BCIT-Fractal-Cortex-5DoF-Slicer
+A modification of Dan Brogan's Fractal Cortex 5Dof slicer to work with BCIT Mechatronics 2026 3D printer capstone
