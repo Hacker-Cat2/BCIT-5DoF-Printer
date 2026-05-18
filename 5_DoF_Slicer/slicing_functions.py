@@ -53,7 +53,7 @@ Contains all calculations related to 3-axis and 5-axis slicing operations.
 infillType = "Triangular"
 buildRadius = 150.0  # mm
 
-# DEFINE VARS Created by Keaton Wescott 2026-03-13
+# DEFINE VARS Created by Keaton 2026-03-13
 YAW_NAME = "A"      # Axis names
 PITCH_NAME = "B"
 HOME_X = 300.0      # X and Y home positions
@@ -1143,7 +1143,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
                 if enableZHop == True:
                     openFile.write("G0 F" + str(G0Z_FEEDRATE) + " Z" + str(round(nozzleHeight + layerHeight, 5)) + "\n")
                 if newChunk == True:
-                    # Modified by Keaton Wescott 2026-04-26
+                    # Modified by Keaton 2026-04-26
                     # removed following line to fix bug where the first layer of a chunk would get printed mid-air
                     #openFile.write("G0 F" + str(G0Z_FEEDRATE) + " Z" + str(round(nozzleHeight + 30.0 + layerHeight, 5)) + "\n")
                     newChunk = False
@@ -1271,7 +1271,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
     G1XY_FEEDRATE_SOLIDINFILL = G1XY_FEEDRATE  # mm/min (PLACEHOLDER)
     G1XY_FEEDRATE_INTERNALINFILL = G1XY_FEEDRATE  # mm/min (PLACEHOLDER)
 
-    # Modified by Keaton Wescott 2026-04-26
+    # Modified by Keaton 2026-04-26
     # Old code:
     # AB_FEEDRATE = 25.0
 
@@ -1337,7 +1337,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
     openFile.write(";" + "enableBrim:          " + str(enableBrim) + "\n")
     openFile.write(";" + "--------------------------" + "\n")
 
-    # Modified by Keaton Wescott 2026-03-13
+    # Modified by Keaton 2026-03-13
     # Old code
     # openFile.write("G28                   ;Home X, Y, & Z axes" + "\n")
     # openFile.write("home_ab               ;Home B Axis and Enable A Axis" + "\n")
@@ -1397,7 +1397,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
 
         DCM_AB = np.eye(3)
 
-        # Added by Keaton Wescott 2026-04-28
+        # Added by Keaton 2026-04-28
         # Apply X, Y and Z offsets caused by bed distance from axis
         for i in range(len(transform3DList)):
             if np.size(transform3DList[i]) == 16:
@@ -1406,7 +1406,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
                 transform3DList[i][2, 3] += (1 - np.cos(theta)) * Z_RADIUS
 
         if key != '0': # If it's not the initial chunk, do some preparation to handle the extra 2 axes
-            # Modified by Keaton Wescott 2026-03-13
+            # Modified by Keaton 2026-03-13
 
             newChunk = True
             if round(ASPEED_Scaled[int(key)], 5) != 0 and round(BSPEED_Scaled[int(key)], 5) != 0:
@@ -1483,7 +1483,7 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
             if k == 1:  # If it's the second layer, transition to nominal print settings
                 openFile.write("M104 S" + str(nozzleTemp) + "   ;Set nozzle temperature for remainder of print" + "\n")
 
-                # No heated bed Keaton Wscott 2026-05-11
+                # No heated bed Keaton 2026-05-11
                 # openFile.write("M140 S" + str(bedTemp) + "    ;Set bed temp for remainder of print" + "\n")
 
             current3DTransform = transform3DList[k]
@@ -1565,14 +1565,14 @@ def write_5_axis_gcode(newFile, savedFileName, printSettings, startingPositions,
     openFile.write("G1 F" + str(E_FEEDRATE) + " E" + str(round(E - 2.0, 5)) + " ; Retract for end of print" + "\n") #######
     openFile.write("G0 F" + str(G0Z_FEEDRATE) + " Z" + str(round(nozzleHeight + layerHeight, 5)) + "\n")
 
-    # No heated bed Keaton Wscott 2026-05-11
+    # No heated bed Keaton 2026-05-11
     # openFile.write("M140 S0       ;Set bed temp to zero" + "\n")
 
     openFile.write("M104 S0       ;Set nozzle temp to zero" + "\n")
     openFile.write("G28 Y         ;Home X-Axis" + "\n")
     openFile.write("G28 X         ;Home X-Axis" + "\n")
 
-    # Modified by Keaton Wescott 2026-05-03
+    # Modified by Keaton 2026-05-03
     # Old code
     # openFile.write('MANUAL_STEPPER STEPPER=stepper_a MOVE=' + str(0.0) + ' SPEED=' + str(round(ASPEED_Scaled[-1], 5)) + ' SYNC=0' + '\n')
     # openFile.write('MANUAL_STEPPER STEPPER=stepper_b MOVE=' + str(0.0) + ' SPEED=' + str(round(BSPEED_Scaled[-1], 5)) + ' SYNC=1' + ' STOP_ON_ENDSTOP=2' + '\n')
@@ -1687,7 +1687,7 @@ def write_3_axis_gcode(newFile, savedFileName, printSettings, transform3DList, a
     openFile.write("G28                   ;Home X, Y, & Z axes" + "\n")
     openFile.write("home_ab               ;Home B Axis and Enable A Axis" + "\n")
 
-    # No heated bed Keaton Wscott 2026-05-11
+    # No heated bed Keaton 2026-05-11
     # openFile.write("M140 S" + str(initialBedTemp) + "            ;Set initial bed temp" + "\n")
     openFile.write("M105                  ;Get nozzle temp" + "\n")
 
@@ -1731,7 +1731,7 @@ def write_3_axis_gcode(newFile, savedFileName, printSettings, transform3DList, a
         if k == 1:  # If it's the second layer, transition to nominal print settings
             openFile.write("M104 S" + str(nozzleTemp) + "   ;Set nozzle temperature for remainder of print" + "\n")
 
-            # No heated bed Keaton Wscott 2026-05-11
+            # No heated bed Keaton 2026-05-11
             # openFile.write("M140 S" + str(bedTemp) + "    ;Set bed temp for remainder of print" + "\n")
 
         current3DTransform = transform3DList[k]
@@ -1803,7 +1803,7 @@ def write_3_axis_gcode(newFile, savedFileName, printSettings, transform3DList, a
     openFile.write("G1 F" + str(E_FEEDRATE) + " E" + str(round(E - 2.0, 5)) + " ; Retract for end of print" + "\n")
     openFile.write("G0 F" + str(G0Z_FEEDRATE) + " Z" + str(round(nozzleHeight + layerHeight, 5)) + "\n")
 
-    # No heated bed Keaton Wscott 2026-05-11
+    # No heated bed Keaton 2026-05-11
     # openFile.write("M140 S0       ;Set bed temp to zero" + "\n")
 
     openFile.write("M104 S0       ;Set nozzle temp to zero" + "\n")
