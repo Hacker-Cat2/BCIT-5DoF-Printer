@@ -1,21 +1,19 @@
 /*
  * Duet Communication Functions
  * Supplementary file for ESP32_One.ino
- * For ESP32 #1 (stationary)
  *
  * FUNCTIONS:
- * initializeDuet()          - Initializes Serial2 and blocks until Duet responds
- * testDuetConnection()      - Sends M115 and returns true if Duet firmware responds
- * getValuesDuet()           - Polls M114 for XYZ/AB position and M408 for print status
- * parseValue()              - Extracts a value from a delimited response string
- * sendDuetMessage()         - Sends an M291 popup message to Duet Web Control
+ * initializeDuet()     - Initialize Serial2 connection to Duet
+ * testDuetConnection() - Test if Duet is responding (sends M115)
+ * getValuesDuet()      - Poll M114 for position and M408 for status
+ * parseValue()         - Extract value from delimited response string
+ * sendDuetMessage()    - Send M291 popup message to Duet Web Control
  */
 
  #include "globals.h"
 
 /**
- * Initialize serial connection to Duet
- * Called once during setup
+ * Initialize Serial2 connection to Duet (GPIO16/17)
  */
 void initializeDuet() {
   Serial.print("Initializing Duet serial connection...\n");
@@ -26,26 +24,22 @@ void initializeDuet() {
 
   bool connect = testDuetConnection();
     
+  // Uncomment to block until Duet responds
   // if (!connect) { Serial.print("WARNING: Duet connection failed. Check wiring."); }
   // while (!connect) {
   //   Serial.print(".");
-
-  //   // blink while waiting
   //   digitalWrite(LED_PIN, !digitalRead(LED_PIN));
   //   delay(200);
-
   //   connect = testDuetConnection();
   // }
 
-  digitalWrite(LED_PIN, HIGH);  // solid on when connected
+  digitalWrite(LED_PIN, HIGH);
   Serial.print("\nDuet connected!\n");
 }
 
 
 /**
- * Test if Duet is responding over serial
- * Sends M115 and waits up to 1 second for response
- * Returns true if Duet responds
+ * Test Duet connection (sends M115, waits 1 second for response)
  */
 bool testDuetConnection() {
   while (duetSerial.available()) duetSerial.read();
@@ -67,9 +61,7 @@ bool testDuetConnection() {
 
 
 /**
- * Request current position, angles, status, and fraction printed from Duet
- * Sends M114 for position and M408 for status
- * Updates global variables
+ * Poll Duet for position (M114) and status (M408)
  */
 void getValuesDuet() {
   // GET POSITION (M114)
@@ -80,14 +72,11 @@ void getValuesDuet() {
 
   if (duetSerial.available()) {
     String response = duetSerial.readStringUntil('\n');
-    // Serial.print(response);
-    // Serial.print("\n");
 
     currentX        = parseValue(response, "X:", ' ').toFloat();
     currentY        = parseValue(response, "Y:", ' ').toFloat();
     currentZ        = parseValue(response, "Z:", ' ').toFloat();
     currentComYaw   = parseValue(response, "A:", ' ').toFloat();
-
     currentComPitch = parseValue(response, "B:", ' ').toFloat();
   }
 
@@ -112,9 +101,8 @@ void getValuesDuet() {
 
 
 /**
- * Parse a value from a response string given a key and delimiter
- * Works for M114 style "X:150.5" and JSON style "status":"I"
- * Returns value as String, call .toFloat() if needed
+ * Parse value from response string
+ * Works for M114 ("X:150.5") and JSON ("status":"I")
  */
 String parseValue(String data, String key, char delimiter) {
   int startIndex = data.indexOf(key);
@@ -129,8 +117,7 @@ String parseValue(String data, String key, char delimiter) {
 
 
 /**
- * Display a message on Duet Web Control
- * Uses M291 non-blocking popup (S1)
+ * Send M291 message to Duet Web Control
  */
 void sendDuetMessage(String message) {
   String gcode = "M291 P\"" + message + "\" S1\n";

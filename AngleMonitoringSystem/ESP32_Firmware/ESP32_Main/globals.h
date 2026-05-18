@@ -1,3 +1,8 @@
+/*
+ * Global Variables and Function Declarations
+ * Header file for ESP32_One.ino
+ */
+
 #pragma once
 
 #include <WiFi.h>
@@ -32,25 +37,19 @@ extern const int duetCheckDelay;
 
 // IMU ANGLES
 extern float measPitch;
-
-extern float refPitch;   // recorded at startup
-
+extern float refPitch;
 extern float lastIMUPitch;
 extern float lastIMUYaw;
-
 extern Vector<3> gravityRef;
 extern Vector<3> gravity;
 
-
 // COMMANDED ANGLES
 extern float currentComPitch;
-extern float currentComYaw;
 extern float previousComPitch;
-extern float previousComYaw;
+extern float currentComYaw;
 extern float errorPitch;
-// extern float errorYaw;
 
-// EXTRUDER TIP POSITION
+// EXTRUDER POSITION
 extern float currentX;
 extern float currentY;
 extern float currentZ;
@@ -65,10 +64,12 @@ extern const float imuStableThres;
 extern const int   stableDur;
 extern const int   settleDur;
 
-// STABILITY AND MOTION TRACKING
-extern bool  isStable;
-extern bool  newCommand;
-extern unsigned long stableStartTime;
+// STATE FLAGS
+extern bool isStable;
+extern bool newCommand;
+
+// TIMING TRACKING
+extern unsigned long stableTime;
 extern unsigned long lastDuetCheckTime;
 extern unsigned long lastMoveTime;
 
@@ -91,5 +92,6 @@ void sendErrorToUnity();
 void sendSuccessToUnity();
 
 void checkIMUSettled();
+void pausePrint();
 void resumePrint();
 bool verifyAngle();

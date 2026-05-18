@@ -1,20 +1,18 @@
 /*
  * Angle Verification Functions
- * Supplementary file for ESP32_One.ino
- * For ESP32 #1 (stationary
+ * Supplementary file for ESP32_Main.ino
  *
  * FUNCTIONS:
- * pausePrint()      - Sends M25 pause command to Duet and notifies Unity
- * resumePrint()     - Sends M24 resume command to Duet and notifies Unity
- * verifyAngle()     - Compares measPitch vs currentComPitch, returns true if within threshold
- * checkIMUSettled() - Monitors pitch change each loop to determine if plate has stopped moving
+ * pausePrint()      - Send M25 pause command to Duet
+ * resumePrint()     - Send M24 resume command to Duet
+ * verifyAngle()     - Compare measured vs commanded pitch, notify if error > 3°
+ * checkIMUSettled() - Monitor pitch change to determine if plate has stopped moving
  */
-
+ 
  #include "globals.h"
 
-
 /**
- * Send pause command to Duet
+ * Send M25 pause command to Duet
  */
 void pausePrint() {
   Serial.print("SENDING PAUSE COMMAND TO DUET\n");
@@ -25,7 +23,7 @@ void pausePrint() {
 
 
 /**
- * Send resume command to Duet
+ * Send M24 resume command to Duet
  */
 void resumePrint() {
   Serial.print("SENDING RESUME COMMAND TO DUET\n");
@@ -35,15 +33,13 @@ void resumePrint() {
 }
 
 /**
- * Compare measured IMU angles against commanded Duet angles
- * Sends error or success notification to Duet and Unity
+ * Compare measured vs commanded pitch
+ * Returns false if error exceeds 3° threshold
  */
 bool verifyAngle() {
   Serial.print("\nVERIFYING ANGLE\n");
 
   errorPitch = abs(measPitch - currentComPitch);
-  // errorYaw = abs(measYaw - currentComYaw);
-  // errorYaw = 0;
 
   if (errorPitch > angleErrThres) {
     Serial.print("ERROR: Pitch mismatch! Error: ");
@@ -66,17 +62,14 @@ bool verifyAngle() {
 }
 
 /**
- * Check if IMU has stabilized after a move
- * Sets isStable = true once angles stop changing for stableDur ms
+ * Check if IMU has stabilized after movement
  */
 void checkIMUSettled() {
   float pitchChange = abs(measPitch - lastIMUPitch);
-  // float yawChange   = abs(measYaw - lastIMUYaw);
 
   bool moving = pitchChange >= imuStableThres;
 
   lastIMUPitch = measPitch;
-  // lastIMUYaw   = measYaw;
 
   if (moving) {
     isStable = false;
@@ -84,5 +77,4 @@ void checkIMUSettled() {
   } else {
     isStable = true;
   }
-
 }
